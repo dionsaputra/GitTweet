@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import ds.mvpkotlin.BuildConfig
 import ds.mvpkotlin.di.qualifier.ApplicationContext
 import ds.mvpkotlin.di.qualifier.PreferenceInfo
 

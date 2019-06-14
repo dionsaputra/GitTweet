@@ -3,7 +3,7 @@ package ds.githubclient.ui.main
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import ds.githubclient.ui.main.search.SearchFragment
+import ds.githubclient.ui.main.search.impl.SearchFragment
 
 class MainAdapter(fragmentManager: FragmentManager) :
     FragmentPagerAdapter(fragmentManager) {
