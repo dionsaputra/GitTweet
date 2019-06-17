@@ -2,7 +2,6 @@ package ds.githubclient.data.network
 
 import ds.githubclient.data.network.model.User
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,23 +12,28 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface Endpoint {
+interface GithubService {
 
     @GET("/users")
     fun listUser(
-        @Query("client_id") clientId: String = "245bcd04581513f36a64",
-        @Query("client_secret") clientSecret: String = "8471c1b4bad816c5806c2412f9b4b8323b51193e"
+        @Query("since") userId: Long,
+        @Query("per_page") perPage: Int,
+        @Query("client_id") clientId: String = CLIENT_ID,
+        @Query("client_secret") clientSecret: String = CLIENT_SECRET
     ): Observable<List<User>>
 
     @GET("/users/{login}")
     fun retrieveUser(
         @Path("login") userLogin: String,
-        @Query("client_id") clientId: String = "245bcd04581513f36a64",
-        @Query("client_secret") clientSecret: String = "8471c1b4bad816c5806c2412f9b4b8323b51193e"
+        @Query("client_id") clientId: String = CLIENT_ID,
+        @Query("client_secret") clientSecret: String = CLIENT_SECRET
     ): Observable<User>
 
     companion object {
-        private val BASE_URL = "http://api.github.com"
+        private const val BASE_URL = "http://api.github.com"
+        private const val CLIENT_ID = "245bcd04581513f36a64"
+        private const val CLIENT_SECRET = "8471c1b4bad816c5806c2412f9b4b8323b51193e"
+
         private var instance: Retrofit? = null
 
         private fun getInstance(): Retrofit {
@@ -49,9 +53,9 @@ interface Endpoint {
             return instance!!
         }
 
-        fun getEndpoint(): Endpoint {
+        fun getEndpoint(): GithubService {
             return getInstance()
-                .create(Endpoint::class.java)
+                .create(GithubService::class.java)
         }
     }
 }
