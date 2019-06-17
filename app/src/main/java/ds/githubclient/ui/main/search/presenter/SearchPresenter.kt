@@ -1,56 +1,81 @@
 package ds.githubclient.ui.main.search.presenter
 
+import ds.githubclient.data.network.model.User
 import ds.githubclient.ui.main.search.interactor.SearchInteractor
 import ds.githubclient.ui.main.search.view.SearchMvpView
+import ds.githubclient.util.orFalse
 import ds.githubclient.util.orZero
+import kotlin.math.sin
 
 class SearchPresenter : SearchMvpPresenter {
 
     lateinit var view: SearchMvpView
     private var interactor: SearchInteractor = SearchInteractor()
-    private var lastUserId = INITIAL_USER_ID
+    private var since = 0L
+    private var page = 1
 
     companion object {
-        private const val INITIAL_PAGE_NUMBER = 0
-        private const val PAGINATION_SIZE = 30
-        private const val INITIAL_USER_ID: Long = 1
+        private var PAGINATION_SIZE = 30
     }
 
     override fun attachView(view: SearchMvpView) {
         this.view = view
     }
 
-    override fun filterUsers(searchQuery: String) {
-//        interactor.getAllUsers(searchQuery) { users, errorMessage -> onUserResponseReceived(users, errorMessage) }
-    }
-
-    override fun loadInitialUsers() {
-        view.onRefresh(true)
-        interactor.getAllUsers(INITIAL_USER_ID, PAGINATION_SIZE) { users, errorMessage ->
-            view.onRefresh(false)
-            if (users.isNullOrEmpty()) {
-                view.showEmptyUser()
-            } else {
-                lastUserId = users.last().id.orZero()
-                view.showInitialPageUsers(users)
-            }
-
-            errorMessage?.let { view.showErrorMessage(it) }
+    override fun getUsers(searchQuery: String, perPage: Int, isStartingPage: Boolean) {
+        showProgress(isStartingPage, isFinish = false)
+        if (searchQuery.isEmpty()) {
+            getAllUser(perPage, isStartingPage)
+        } else {
+            searchUser(searchQuery, perPage, isStartingPage)
         }
     }
 
-    override fun loadMoreUsers() {
-        view.onLoadMore(true)
-        interactor.getAllUsers(lastUserId + 1, PAGINATION_SIZE) { users, errorMessage ->
-            view.onLoadMore(false)
-            if (users.isNullOrEmpty()) {
-                view.showEmptyUser()
+    private fun getAllUser(perPage: Int, isStartingPage: Boolean) {
+        interactor.getAllUser(since, perPage) { users, throwable ->
+            onUserResponseReceived(isStartingPage, false, users, throwable)
+        }
+    }
+
+    private fun searchUser(searchQuery: String, perPage: Int, isStartingPage: Boolean) {
+        interactor.searchUser(searchQuery, page, perPage) { searchResponse, throwable ->
+            if(view.getTotalItem() >= searchResponse?.totalCount?:0) {
+                view.onReachEndOfData()
+            }
+            onUserResponseReceived(isStartingPage, true, searchResponse?.items, throwable)
+        }
+    }
+
+    private fun showProgress(isStartingPage: Boolean, isFinish: Boolean) {
+        if (isStartingPage) {
+            view.onRefresh(!isFinish)
+            since = 0
+            page = 1
+        } else {
+            view.onLoadMore(!isFinish)
+        }
+    }
+
+    private fun onUserResponseReceived(isStartingPage: Boolean, isSearch: Boolean, users: List<User>?, throwable: Throwable?) {
+        showProgress(isStartingPage, isFinish = true)
+        if (users.isNullOrEmpty()) {
+            view.showEmptyUser()
+        } else {
+            if (isStartingPage) {
+                view.showInitialPageUsers(users)
             } else {
-                lastUserId = users.last().id.orZero()
                 view.showNextPageUsers(users)
             }
 
-            errorMessage?.let { view.showErrorMessage(it) }
+            if (isSearch) {
+                page++
+            } else {
+                since = users.last().id.orZero()
+            }
+        }
+
+        if (throwable?.message?.isNotEmpty().orFalse()) {
+            view.showErrorMessage(throwable?.message.orEmpty())
         }
     }
 }

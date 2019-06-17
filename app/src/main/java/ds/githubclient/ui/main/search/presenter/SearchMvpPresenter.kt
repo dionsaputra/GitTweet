@@ -5,8 +5,6 @@ import ds.githubclient.ui.main.search.view.SearchMvpView
 interface SearchMvpPresenter {
 
     fun attachView(view: SearchMvpView)
-    fun filterUsers(searchQuery: String)
-    fun loadInitialUsers()
-    fun loadMoreUsers()
+    fun getUsers(searchQuery: String, perPage: Int, isStartingPage: Boolean)
 
 }

@@ -1,11 +1,12 @@
 package ds.githubclient.ui.main.search.view
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +21,20 @@ class SearchFragment : Fragment(), SearchMvpView {
 
     private val presenter: SearchMvpPresenter = SearchPresenter()
     private val searchUserAdapter = SearchUserAdapter(mutableListOf())
-    private val VISIBLE_THRESHOLD = 20
     private var isLoadingMore = false
+    private var isEndOfData = false
+    private var searchQuery = EMPTY_SEARCH_QUERY
+
+    companion object {
+        private const val EMPTY_SEARCH_QUERY = ""
+        private const val PAGINATION_SIZE = 30
+        private const val VISIBLE_THRESHOLD = 5
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_search, container, false)
@@ -31,6 +44,11 @@ class SearchFragment : Fragment(), SearchMvpView {
         super.onViewCreated(view, savedInstanceState)
         setupView()
         setupListener()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.search_menu, menu)
+        setupSearchView(menu)
     }
 
     override fun showInitialPageUsers(users: List<User>) {
@@ -52,7 +70,10 @@ class SearchFragment : Fragment(), SearchMvpView {
     }
 
     override fun onRefresh(refreshState: Boolean) {
-        searchUserRefresh.isRefreshing = refreshState
+        if (!isLoadingMore) {
+            searchUserRefresh.isRefreshing = refreshState
+            isEndOfData = false
+        }
     }
 
     override fun onLoadMore(loadingMoreState: Boolean) {
@@ -64,11 +85,15 @@ class SearchFragment : Fragment(), SearchMvpView {
         isLoadingMore = !isLoadingMore
     }
 
+    override fun onReachEndOfData() {
+        isEndOfData = true
+    }
+
     private fun setupView() {
         presenter.attachView(this)
         setupRecyclerView()
 
-        presenter.loadInitialUsers()
+        presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
     }
 
     private fun setupListener() {
@@ -90,7 +115,7 @@ class SearchFragment : Fragment(), SearchMvpView {
                 val layoutManager = searchUserRecycler.layoutManager as LinearLayoutManager
 
                 if (isAbleToLoad(layoutManager)) {
-                    presenter.loadMoreUsers()
+                    presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = false)
                 }
             }
         })
@@ -98,7 +123,7 @@ class SearchFragment : Fragment(), SearchMvpView {
 
     private fun setupRefreshListener() {
         searchUserRefresh.setOnRefreshListener {
-            presenter.loadInitialUsers()
+            presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
         }
     }
 
@@ -110,5 +135,34 @@ class SearchFragment : Fragment(), SearchMvpView {
         return !isLoadingMore &&
                 childCount + firstVisible + VISIBLE_THRESHOLD >= itemCount
                 && firstVisible >= 0
+                && !isEndOfData
     }
+
+    private fun setupSearchView(menu: Menu?) {
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchItem = menu?.findItem(R.id.action_search)
+        searchItem?.let {
+            val searchView = searchItem.actionView as SearchView
+            searchView.queryHint = "Search ${getString(R.string.app_name)}"
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    searchQuery = query.orEmpty()
+                    presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
+                    return true
+                }
+            })
+            searchView.setOnCloseListener {
+                searchQuery = EMPTY_SEARCH_QUERY
+                presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
+                searchUserRefresh.isRefreshing = true
+                false
+            }
+        }
+    }
+
+    override fun getTotalItem(): Int = searchUserAdapter.itemCount
 }

@@ -8,6 +8,8 @@ interface SearchMvpView {
     fun showNextPageUsers(users: List<User>)
     fun onRefresh(refreshState: Boolean)
     fun onLoadMore(loadingMoreState: Boolean)
+    fun onReachEndOfData()
     fun showEmptyUser()
     fun showErrorMessage(errorMessage: String)
+    fun getTotalItem(): Int
 }

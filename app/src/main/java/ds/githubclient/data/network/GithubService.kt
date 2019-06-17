@@ -1,5 +1,6 @@
 package ds.githubclient.data.network
 
+import ds.githubclient.data.network.model.SearchResponse
 import ds.githubclient.data.network.model.User
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -16,7 +17,7 @@ interface GithubService {
 
     @GET("/users")
     fun listUser(
-        @Query("since") userId: Long,
+        @Query("since") lastUserId: Long,
         @Query("per_page") perPage: Int,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
@@ -28,6 +29,15 @@ interface GithubService {
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
     ): Observable<User>
+
+    @GET("/search/users")
+    fun searchUser(
+        @Query("q") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
+        @Query("client_id") clientId: String = CLIENT_ID,
+        @Query("client_secret") clientSecret: String = CLIENT_SECRET
+    ): Observable<SearchResponse<List<User>>>
 
     companion object {
         private const val BASE_URL = "http://api.github.com"
