@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -92,6 +93,7 @@ class SearchFragment : Fragment(), SearchMvpView {
     private fun setupView() {
         presenter.attachView(this)
         setupRecyclerView()
+//        setupToolbar()
 
         presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
     }
@@ -106,6 +108,12 @@ class SearchFragment : Fragment(), SearchMvpView {
             adapter = searchUserAdapter
             layoutManager = LinearLayoutManager(context)
         }
+    }
+
+    private fun setupToolbar() {
+        val supportActionBar = (activity as AppCompatActivity).supportActionBar
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.user_placeholder)
     }
 
     private fun setupScrollListener() {
