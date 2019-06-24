@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupView() {
         setupViewPager()
-        setupToolbar()
+//        setupToolbar()
     }
 
     private fun setupViewPager() {
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(mainToolbar)
+//        setSupportActionBar(mainToolbar)
     }
 
     private fun setupListener() {

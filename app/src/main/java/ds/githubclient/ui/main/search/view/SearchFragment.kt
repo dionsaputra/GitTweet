@@ -1,30 +1,24 @@
 package ds.githubclient.ui.main.search.view
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ds.githubclient.R
 import ds.githubclient.data.network.model.User
-import ds.githubclient.ui.main.search.adapter.SearchUserAdapter
 import ds.githubclient.ui.main.search.presenter.SearchMvpPresenter
 import ds.githubclient.ui.main.search.presenter.SearchPresenter
+import ds.githubclient.ui.main.searchuser.SearchUserFragment
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment(), SearchMvpView {
 
     private val presenter: SearchMvpPresenter = SearchPresenter()
-    private val searchUserAdapter = SearchUserAdapter(mutableListOf())
-    private var isLoadingMore = false
-    private var isEndOfData = false
-    private var searchQuery = EMPTY_SEARCH_QUERY
+    //    private val searchUserAdapter = SearchUserAdapter(mutableListOf())
 
     companion object {
         private const val EMPTY_SEARCH_QUERY = ""
@@ -49,15 +43,22 @@ class SearchFragment : Fragment(), SearchMvpView {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.search_menu, menu)
-        setupSearchView(menu)
+//        setupSearchView(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_setting -> Toast.makeText(context, "Setting in construction", Toast.LENGTH_SHORT).show()
+        }
+        return true
     }
 
     override fun showInitialPageUsers(users: List<User>) {
-        searchUserAdapter.swapData(users)
+//        searchUserAdapter.swapData(users)
     }
 
     override fun showNextPageUsers(users: List<User>) {
-        searchUserAdapter.addData(users)
+//        searchUserAdapter.addData(users)
     }
 
     override fun showErrorMessage(errorMessage: String) {
@@ -71,10 +72,10 @@ class SearchFragment : Fragment(), SearchMvpView {
     }
 
     override fun onRefresh(refreshState: Boolean) {
-        if (!isLoadingMore) {
-            searchUserRefresh.isRefreshing = refreshState
-            isEndOfData = false
-        }
+//        if (!isLoadingMore) {
+//            searchUserRefresh.isRefreshing = refreshState
+//            isEndOfData = false
+//        }
     }
 
     override fun onLoadMore(loadingMoreState: Boolean) {
@@ -83,37 +84,46 @@ class SearchFragment : Fragment(), SearchMvpView {
         } else {
             searchUserProgress.visibility = View.GONE
         }
-        isLoadingMore = !isLoadingMore
+//        isLoadingMore = !isLoadingMore
     }
 
     override fun onReachEndOfData() {
-        isEndOfData = true
+//        isEndOfData = true
     }
 
     private fun setupView() {
         presenter.attachView(this)
-        setupRecyclerView()
-//        setupToolbar()
+//        setupRecyclerView()
+        setupToolbar()
 
-        presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
+//        presenter.getUsers(searchQuery, SEARCH_PAGINATION_SIZE, isStartingPage = true)
     }
 
     private fun setupListener() {
+        setupNavigationSearch()
         setupScrollListener()
         setupRefreshListener()
     }
 
-    private fun setupRecyclerView() {
-        searchUserRecycler.apply {
-            adapter = searchUserAdapter
-            layoutManager = LinearLayoutManager(context)
+    private fun setupNavigationSearch() {
+        searchNavigationToolbar.setOnClickListener {
+            val searchUserFragment = SearchUserFragment()
+            searchUserFragment.show(fragmentManager, SearchUserFragment::class.java.simpleName)
+//            SearchUserFragment().show()
         }
     }
 
+//    private fun setupRecyclerView() {
+//        searchUserRecycler.apply {
+//            adapter = searchUserAdapter
+//            layoutManager = LinearLayoutManager(context)
+//        }
+//    }
+
     private fun setupToolbar() {
-        val supportActionBar = (activity as AppCompatActivity).supportActionBar
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.user_placeholder)
+        (activity as AppCompatActivity).setSupportActionBar(toolbarSearchUser)
+//        supportActionBar?.setDisplayShowHomeEnabled(true)
+//        supportActionBar?.setHomeAsUpIndicator(R.drawable.user_placeholder)
     }
 
     private fun setupScrollListener() {
@@ -123,7 +133,7 @@ class SearchFragment : Fragment(), SearchMvpView {
                 val layoutManager = searchUserRecycler.layoutManager as LinearLayoutManager
 
                 if (isAbleToLoad(layoutManager)) {
-                    presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = false)
+//                    presenter.getUsers(searchQuery, SEARCH_PAGINATION_SIZE, isStartingPage = false)
                 }
             }
         })
@@ -131,7 +141,7 @@ class SearchFragment : Fragment(), SearchMvpView {
 
     private fun setupRefreshListener() {
         searchUserRefresh.setOnRefreshListener {
-            presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
+//            presenter.getUsers(searchQuery, SEARCH_PAGINATION_SIZE, isStartingPage = true)
         }
     }
 
@@ -140,37 +150,42 @@ class SearchFragment : Fragment(), SearchMvpView {
         val firstVisible = layoutManager.findFirstVisibleItemPosition()
         val itemCount = layoutManager.itemCount
 
-        return !isLoadingMore &&
-                childCount + firstVisible + VISIBLE_THRESHOLD >= itemCount
-                && firstVisible >= 0
-                && !isEndOfData
+        return false
+//        return !isLoadingMore &&
+//                childCount + firstVisible + VISIBLE_THRESHOLD >= itemCount
+//                && firstVisible >= 0
+//                && !isEndOfData
     }
 
     private fun setupSearchView(menu: Menu?) {
-        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchItem = menu?.findItem(R.id.action_search)
-        searchItem?.let {
-            val searchView = searchItem.actionView as SearchView
-            searchView.queryHint = "Search ${getString(R.string.app_name)}"
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    searchQuery = query.orEmpty()
-                    presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
-                    return true
-                }
-            })
-            searchView.setOnCloseListener {
-                searchQuery = EMPTY_SEARCH_QUERY
-                presenter.getUsers(searchQuery, PAGINATION_SIZE, isStartingPage = true)
-                searchUserRefresh.isRefreshing = true
-                false
-            }
-        }
+//        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        val searchItem = menu?.findItem(R.id.action_search)
+//        searchItem?.let {
+//            val searchView = searchItem.actionView as SearchView
+//            searchView.queryHint = "Search ${getString(R.string.app_name)}"
+//            searchView.setOnClickListener {
+//                startActivity(Intent(context, SearchUserActivity::class.java))
+//            }
+//
+//            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    return false
+//                }
+//
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    searchQuery = query.orEmpty()
+//                    presenter.getUsers(searchQuery, SEARCH_PAGINATION_SIZE, isStartingPage = true)
+//                    return true
+//                }
+//            })
+//            searchView.setOnCloseListener {
+//                searchQuery = EMPTY_SEARCH_QUERY
+//                presenter.getUsers(searchQuery, SEARCH_PAGINATION_SIZE, isStartingPage = true)
+//                searchUserRefresh.isRefreshing = true
+//                false
+//            }
+//        }
     }
 
-    override fun getTotalItem(): Int = searchUserAdapter.itemCount
+    override fun getTotalItem(): Int = 0//searchUserAdapter.itemCount
 }

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@android:color/white"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarSearchUser"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:navigationIcon="@drawable/ic_arrow_back_blue">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/editSearchInput"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Search"
+                    android:imeOptions="actionSearch"
+                    android:maxLines="1"
+                    android:padding="@dimen/small_space"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/dark_grey" />
+
+                <ImageButton
+                    android:id="@+id/buttonClearSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="@dimen/extra_small_space"
+                    android:background="@android:color/transparent"
+                    android:foreground="?selectableItemBackgroundBorderless"
+                    android:padding="@dimen/small_space"
+                    android:src="@drawable/ic_close_blue"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/groupRecent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/extra_small_space"
+                android:padding="@dimen/small_space"
+                android:text="Recent"
+                android:textColor="@color/dark_grey" />
+
+            <ImageButton
+                android:id="@+id/buttonClearRecent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/extra_small_space"
+                android:background="@android:color/transparent"
+                android:padding="@dimen/small_space"
+                android:src="@drawable/ic_close_grey" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/divider_color" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerRecent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/extra_small_space" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/groupSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="@dimen/extra_small_space" />
+
+        <ProgressBar
+            android:id="@+id/progressSearchLoadMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/small_space"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

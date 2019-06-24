@@ -37,7 +37,7 @@ interface GithubService {
         @Query("per_page") perPage: Int,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
-    ): Observable<SearchResponse<List<User>>>
+    ): Observable<SearchResponse<List<User>?>>
 
     companion object {
         private const val BASE_URL = "http://api.github.com"

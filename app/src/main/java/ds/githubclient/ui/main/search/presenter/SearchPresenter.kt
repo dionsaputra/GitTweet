@@ -5,7 +5,6 @@ import ds.githubclient.ui.main.search.interactor.SearchInteractor
 import ds.githubclient.ui.main.search.view.SearchMvpView
 import ds.githubclient.util.orFalse
 import ds.githubclient.util.orZero
-import kotlin.math.sin
 
 class SearchPresenter : SearchMvpPresenter {
 
@@ -32,13 +31,13 @@ class SearchPresenter : SearchMvpPresenter {
     }
 
     private fun getAllUser(perPage: Int, isStartingPage: Boolean) {
-        interactor.getAllUser(since, perPage) { users, throwable ->
+        interactor.listUsers(since, perPage) { users, throwable ->
             onUserResponseReceived(isStartingPage, false, users, throwable)
         }
     }
 
     private fun searchUser(searchQuery: String, perPage: Int, isStartingPage: Boolean) {
-        interactor.searchUser(searchQuery, page, perPage) { searchResponse, throwable ->
+        interactor.filterUsers(searchQuery, page, perPage) { searchResponse, throwable ->
             if(view.getTotalItem() >= searchResponse?.totalCount?:0) {
                 view.onReachEndOfData()
             }

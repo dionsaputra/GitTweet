@@ -3,4 +3,8 @@
     <dimen name="extra_small_space">4dp</dimen>
     <dimen name="toolbar_avatar_size">36dp</dimen>
     <dimen name="small_space">8dp</dimen>
+    <dimen name="item_recent_search_size">128dp</dimen>
+    <dimen name="item_recent_search_avatar_size">72dp</dimen>
+    <dimen name="normal_space">16dp</dimen>
+    <dimen name="size_search_result_avatar">48dp</dimen>
 </resources>

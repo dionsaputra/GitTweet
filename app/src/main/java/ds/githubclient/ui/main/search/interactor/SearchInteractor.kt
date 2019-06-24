@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers
 class SearchInteractor : SearchMvpInteractor {
 
     @SuppressLint("CheckResult")
-    override fun getAllUser(since: Long, perPage: Int, onComplete: (List<User>?, Throwable?) -> Unit) {
+    override fun listUsers(since: Long, perPage: Int, onComplete: (List<User>?, Throwable?) -> Unit) {
         GithubService.getEndpoint().listUser(since, perPage)
             .flatMap { users -> Observable.fromIterable(users) }
             .flatMap { user -> GithubService.getEndpoint().retrieveUser(user.login.orEmpty()).onErrorReturn { user } }
@@ -27,28 +27,28 @@ class SearchInteractor : SearchMvpInteractor {
     }
 
     @SuppressLint("CheckResult")
-    override fun searchUser(
+    override fun filterUsers(
         query: String,
         page: Int,
         perPage: Int,
         onComplete: (SearchResponse<List<User>?>?, Throwable?) -> Unit
     ) {
         GithubService.getEndpoint().searchUser(query, page, perPage)
-            .flatMap { searchResponse ->
-                Single.zip(
-                    Single.just(searchResponse),
-                    Observable.fromIterable(searchResponse.items)
-                        .flatMap { user ->
-                            GithubService.getEndpoint().retrieveUser(user.login.orEmpty()).onErrorReturn { user }
-                        }.toList(),
-                    BiFunction<SearchResponse<List<User>>, List<User>, SearchResponse<List<User>?>> { t1, t2 ->
-                        createSearchResponse(
-                            t1,
-                            t2
-                        )
-                    }
-                ).toObservable()
-            }
+//            .flatMap { searchResponse ->
+//                Single.zip(
+//                    Single.just(searchResponse),
+//                    Observable.fromIterable(searchResponse.items)
+//                        .flatMap { user ->
+//                            GithubService.getEndpoint().retrieveUser(user.login.orEmpty()).onErrorReturn { user }
+//                        }.toList(),
+//                    BiFunction<SearchResponse<List<User>>, List<User>, SearchResponse<List<User>?>> { t1, t2 ->
+//                        createSearchResponse(
+//                            t1,
+//                            t2
+//                        )
+//                    }
+//                ).toObservable()
+//            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .doOnError {
