@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ds.githubclient.R
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.UserResponse
 import kotlinx.android.synthetic.main.dialog_search_user.*
 
 class SearchUserFragment() : DialogFragment(), SearchUserView {
@@ -23,7 +23,9 @@ class SearchUserFragment() : DialogFragment(), SearchUserView {
 
     private val presenter = SearchUserPresenter()
     private val recentAdapter = SearchUserAdapter(mutableListOf(), true)
-    private val searchAdapter = SearchUserAdapter(mutableListOf(), false)
+    private val searchAdapter = SearchUserAdapter(mutableListOf(), false) {
+        presenter.onSearchItemClick(it)
+    }
 
     private var lastSearchQuery = ""
     private var isLoadingMoreSearchResult = false
@@ -55,74 +57,54 @@ class SearchUserFragment() : DialogFragment(), SearchUserView {
         setupSearchRecycler()
     }
 
-    override fun showClearSearchButton() {
-        buttonClearSearch.visibility = View.VISIBLE
-    }
-
-    override fun hideClearSearchButton() {
-        buttonClearSearch.visibility = View.INVISIBLE
+    override fun showClearSearchButton(isShow: Boolean) {
+        buttonClearSearch.visibility = if (isShow) View.VISIBLE else View.INVISIBLE
     }
 
     override fun clearSearchQuery() {
         editSearchInput.text.clear()
     }
 
-    override fun showDeleteRecentConfirmation() {
-        clearRecentConfirmationDialog.show()
+    override fun showClearRecentConfirmation(isShow: Boolean) {
+        if (isShow) clearRecentConfirmationDialog.show() else clearRecentConfirmationDialog.dismiss()
     }
 
-    override fun hideDeleteRecentConfirmation() {
-        clearRecentConfirmationDialog.dismiss()
+    override fun showGroupRecent(isShow: Boolean) {
+        groupRecent.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
-    override fun hideGroupRecent() {
-        groupRecent.visibility = View.GONE
-    }
-
-    override fun showGroupRecent() {
-        groupRecent.visibility = View.VISIBLE
-    }
-
-    override fun hideGroupSearch() {
-        groupSearch.visibility = View.GONE
-    }
-
-    override fun showGroupSearch() {
-        groupSearch.visibility = View.VISIBLE
+    override fun showGroupSearch(isShow: Boolean) {
+        groupSearch.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 
     override fun showRecentEmpty() {}
 
-    override fun showRecentResult(users: List<User>) {
-        recentAdapter.swapData(users)
+    override fun showRecentResult(userResponses: List<UserResponse>) {
+        recentAdapter.swapData(userResponses)
     }
 
-    override fun showError(error: Throwable) {
-        Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+    override fun showMessage(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun showSearchEmpty() {}
 
-    override fun showFirstPageSearchResult(users: List<User>) {
-        searchAdapter.swapData(users)
-    }
-
-    override fun showNextPageSearchResult(users: List<User>) {
-        searchAdapter.addData(users)
+    override fun showSearchResult(userResponses: List<UserResponse>, isFirstPage: Boolean) {
+        if (isFirstPage) searchAdapter.swapData(userResponses) else searchAdapter.addData(userResponses)
     }
 
     override fun checkEndOfSearchData(totalCount: Int) {
         isSearchReachEndOfPage = (searchAdapter.itemCount == totalCount)
     }
 
-    override fun showLoadMoreSearchLoading() {
-        progressSearchLoadMore.visibility = View.VISIBLE
-        isLoadingMoreSearchResult = true
-    }
-
-    override fun hideLoadMoreSearchLoading() {
-        progressSearchLoadMore.visibility = View.GONE
-        isLoadingMoreSearchResult = false
+    override fun showLoadMoreSearchLoading(isShow: Boolean) {
+        if (isShow) {
+            progressSearchLoadMore.visibility = View.VISIBLE
+            isLoadingMoreSearchResult = true
+        } else {
+            progressSearchLoadMore.visibility = View.GONE
+            isLoadingMoreSearchResult = false
+        }
     }
 
     override fun closeView() {

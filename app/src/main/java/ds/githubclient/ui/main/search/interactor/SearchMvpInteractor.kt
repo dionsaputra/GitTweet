@@ -1,11 +1,11 @@
 package ds.githubclient.ui.main.search.interactor
 
-import ds.githubclient.data.network.model.SearchResponse
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.SearchResponse
+import ds.githubclient.data.remote.response.UserResponse
 
 interface SearchMvpInteractor {
 
-    fun listUsers(since: Long, perPage: Int, onComplete: (List<User>?, Throwable?) -> Unit)
-    fun filterUsers(query: String, page: Int, perPage: Int, onComplete: (SearchResponse<List<User>?>?, Throwable?) -> Unit)
+    fun listUsers(since: Long, perPage: Int, onComplete: (List<UserResponse>?, Throwable?) -> Unit)
+    fun filterUsers(query: String, page: Int, perPage: Int, onComplete: (SearchResponse<List<UserResponse>?>?, Throwable?) -> Unit)
 
 }

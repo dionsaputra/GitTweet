@@ -1,11 +1,11 @@
 package ds.githubclient.ui.main.search.view
 
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.UserResponse
 
 interface SearchMvpView {
 
-    fun showInitialPageUsers(users: List<User>)
-    fun showNextPageUsers(users: List<User>)
+    fun showInitialPageUsers(userResponses: List<UserResponse>)
+    fun showNextPageUsers(userResponses: List<UserResponse>)
     fun onRefresh(refreshState: Boolean)
     fun onLoadMore(loadingMoreState: Boolean)
     fun onReachEndOfData()

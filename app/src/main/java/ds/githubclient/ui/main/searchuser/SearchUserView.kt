@@ -1,28 +1,22 @@
 package ds.githubclient.ui.main.searchuser
 
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.UserResponse
 
 interface SearchUserView {
 
     fun initView()
-    fun showClearSearchButton()
-    fun hideClearSearchButton()
+    fun showClearSearchButton(isShow: Boolean)
     fun clearSearchQuery()
-    fun showDeleteRecentConfirmation()
-    fun hideDeleteRecentConfirmation()
-    fun hideGroupRecent()
-    fun showGroupRecent()
-    fun hideGroupSearch()
-    fun showGroupSearch()
+    fun showClearRecentConfirmation(isShow: Boolean)
+    fun showGroupRecent(isShow: Boolean)
+    fun showGroupSearch(isShow: Boolean)
     fun showRecentEmpty()
-    fun showRecentResult(users: List<User>)
-    fun showError(error: Throwable)
+    fun showRecentResult(userResponses: List<UserResponse>)
+    fun showMessage(message: String)
     fun showSearchEmpty()
-    fun showFirstPageSearchResult(users: List<User>)
-    fun showNextPageSearchResult(users: List<User>)
+    fun showSearchResult(userResponses: List<UserResponse>, isFirstPage: Boolean)
     fun checkEndOfSearchData(totalCount: Int)
-    fun showLoadMoreSearchLoading()
-    fun hideLoadMoreSearchLoading()
+    fun showLoadMoreSearchLoading(isShow: Boolean)
     fun closeView()
 
 }

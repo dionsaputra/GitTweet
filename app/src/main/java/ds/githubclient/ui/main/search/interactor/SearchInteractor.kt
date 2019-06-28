@@ -1,19 +1,17 @@
 package ds.githubclient.ui.main.search.interactor
 
 import android.annotation.SuppressLint
-import ds.githubclient.data.network.GithubService
-import ds.githubclient.data.network.model.SearchResponse
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.endpoint.GithubService
+import ds.githubclient.data.remote.response.SearchResponse
+import ds.githubclient.data.remote.response.UserResponse
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
 class SearchInteractor : SearchMvpInteractor {
 
     @SuppressLint("CheckResult")
-    override fun listUsers(since: Long, perPage: Int, onComplete: (List<User>?, Throwable?) -> Unit) {
+    override fun listUsers(since: Long, perPage: Int, onComplete: (List<UserResponse>?, Throwable?) -> Unit) {
         GithubService.getEndpoint().listUser(since, perPage)
             .flatMap { users -> Observable.fromIterable(users) }
             .flatMap { user -> GithubService.getEndpoint().retrieveUser(user.login.orEmpty()).onErrorReturn { user } }
@@ -31,7 +29,7 @@ class SearchInteractor : SearchMvpInteractor {
         query: String,
         page: Int,
         perPage: Int,
-        onComplete: (SearchResponse<List<User>?>?, Throwable?) -> Unit
+        onComplete: (SearchResponse<List<UserResponse>?>?, Throwable?) -> Unit
     ) {
         GithubService.getEndpoint().searchUser(query, page, perPage)
 //            .flatMap { searchResponse ->
@@ -41,7 +39,7 @@ class SearchInteractor : SearchMvpInteractor {
 //                        .flatMap { user ->
 //                            GithubService.getEndpoint().retrieveUser(user.login.orEmpty()).onErrorReturn { user }
 //                        }.toList(),
-//                    BiFunction<SearchResponse<List<User>>, List<User>, SearchResponse<List<User>?>> { t1, t2 ->
+//                    BiFunction<SearchResponse<List<UserResponse>>, List<UserResponse>, SearchResponse<List<UserResponse>?>> { t1, t2 ->
 //                        createSearchResponse(
 //                            t1,
 //                            t2
@@ -60,10 +58,10 @@ class SearchInteractor : SearchMvpInteractor {
     }
 
     private fun createSearchResponse(
-        searchResponse: SearchResponse<List<User>>,
-        users: List<User>
-    ): SearchResponse<List<User>?> {
-        return SearchResponse(searchResponse.totalCount, searchResponse.incompleteResults, users)
+        searchResponse: SearchResponse<List<UserResponse>>,
+        userResponses: List<UserResponse>
+    ): SearchResponse<List<UserResponse>?> {
+        return SearchResponse(searchResponse.totalCount, searchResponse.incompleteResults, userResponses)
     }
 
 }

@@ -1,16 +1,17 @@
 package ds.githubclient.ui.main.searchuser
 
 import android.annotation.SuppressLint
-import ds.githubclient.data.network.GithubService
-import ds.githubclient.data.network.model.SearchResponse
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.local.database.GithubDatabase
+import ds.githubclient.data.remote.endpoint.GithubService
+import ds.githubclient.data.remote.response.SearchResponse
+import ds.githubclient.data.remote.response.UserResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class SearchUserInteractor {
 
-    fun listRecentSearch(onComplete: (List<User>?, Throwable?) -> Unit) {
-
+    fun listRecentSearch(onComplete: (List<UserResponse>?, Throwable?) -> Unit) {
+        GithubDatabase.getInstance()
     }
 
     @SuppressLint("CheckResult")
@@ -18,7 +19,7 @@ class SearchUserInteractor {
         query: String,
         page: Int,
         perPage: Int,
-        onComplete: (SearchResponse<List<User>?>?, Throwable?) -> Unit
+        onComplete: (SearchResponse<List<UserResponse>?>?, Throwable?) -> Unit
     ) {
         GithubService.getEndpoint().searchUser(query, page, perPage)
             .observeOn(AndroidSchedulers.mainThread())
@@ -32,9 +33,9 @@ class SearchUserInteractor {
     }
 
     private fun createSearchResponse(
-        searchResponse: SearchResponse<List<User>>,
-        users: List<User>
-    ): SearchResponse<List<User>?> {
-        return SearchResponse(searchResponse.totalCount, searchResponse.incompleteResults, users)
+        searchResponse: SearchResponse<List<UserResponse>>,
+        userResponses: List<UserResponse>
+    ): SearchResponse<List<UserResponse>?> {
+        return SearchResponse(searchResponse.totalCount, searchResponse.incompleteResults, userResponses)
     }
 }

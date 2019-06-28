@@ -1,10 +1,9 @@
-package ds.githubclient.data.network.model
+package ds.githubclient.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-
-data class User(
+data class UserResponse(
     @SerializedName("login") val login: String? = null,
     @SerializedName("id") val id: Long? = null,
     @SerializedName("node_id") val nodeId: String? = null,
@@ -37,8 +36,7 @@ data class User(
     @SerializedName("created_at") val createdAt: Date? = null,
     @SerializedName("updated_at") val updatedAt: Date? = null
 ) {
-
-    fun generalEquals(user: User): Boolean {
-        return id == user.id && login == user.login && bio == user.bio
+    fun generalEquals(userResponse: UserResponse): Boolean {
+        return id == userResponse.id && login == userResponse.login && bio == userResponse.bio
     }
 }

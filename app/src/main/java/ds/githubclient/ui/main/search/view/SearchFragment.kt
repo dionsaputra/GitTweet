@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ds.githubclient.R
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.UserResponse
 import ds.githubclient.ui.main.search.presenter.SearchMvpPresenter
 import ds.githubclient.ui.main.search.presenter.SearchPresenter
 import ds.githubclient.ui.main.searchuser.SearchUserFragment
@@ -53,12 +53,12 @@ class SearchFragment : Fragment(), SearchMvpView {
         return true
     }
 
-    override fun showInitialPageUsers(users: List<User>) {
-//        searchUserAdapter.swapData(users)
+    override fun showInitialPageUsers(userResponses: List<UserResponse>) {
+//        searchUserAdapter.swapData(userResponses)
     }
 
-    override fun showNextPageUsers(users: List<User>) {
-//        searchUserAdapter.addData(users)
+    override fun showNextPageUsers(userResponses: List<UserResponse>) {
+//        searchUserAdapter.addData(userResponses)
     }
 
     override fun showErrorMessage(errorMessage: String) {

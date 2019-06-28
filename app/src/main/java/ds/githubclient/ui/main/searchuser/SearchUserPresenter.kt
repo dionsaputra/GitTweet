@@ -1,5 +1,6 @@
 package ds.githubclient.ui.main.searchuser
 
+import ds.githubclient.data.remote.response.UserResponse
 import ds.githubclient.util.orZero
 
 class SearchUserPresenter {
@@ -27,14 +28,14 @@ class SearchUserPresenter {
         resetSearchState()
 
         if (query.isEmpty()) {
-            view.hideClearSearchButton()
-            view.showGroupRecent()
-            view.hideGroupSearch()
+            view.showClearSearchButton(false)
+            view.showGroupRecent(true)
+            view.showGroupSearch(false)
             listRecent()
         } else {
-            view.showClearSearchButton()
-            view.hideGroupRecent()
-            view.showGroupSearch()
+            view.showClearSearchButton(true)
+            view.showGroupRecent(false)
+            view.showGroupSearch(true)
             listSearch(query, currentSearchPage, SEARCH_PAGINATION_SIZE, true)
         }
     }
@@ -44,7 +45,7 @@ class SearchUserPresenter {
     }
 
     fun onClearRecent() {
-        view.showDeleteRecentConfirmation()
+        view.showClearRecentConfirmation(true)
     }
 
     fun onAcceptClearRecent() {
@@ -52,11 +53,15 @@ class SearchUserPresenter {
     }
 
     fun onCancelClearRecent() {
-        view.hideDeleteRecentConfirmation()
+        view.showClearRecentConfirmation(false)
     }
 
     fun loadMoreSearch(lastSearchQuery: String) {
         listSearch(lastSearchQuery, currentSearchPage, SEARCH_PAGINATION_SIZE, false)
+    }
+
+    fun onSearchItemClick(it: UserResponse) {
+
     }
 
     private fun resetSearchState() {
@@ -72,14 +77,14 @@ class SearchUserPresenter {
                     view.showRecentResult(users)
                 }
             } else {
-                view.showError(error)
+                error.message?.let { view.showMessage(it) }
             }
         }
     }
 
     private fun listSearch(query: String, page: Int, perPage: Int, isFirstSearch: Boolean) {
         if (!isFirstSearch) {
-            view.showLoadMoreSearchLoading()
+            view.showLoadMoreSearchLoading(true)
         }
 
         interactor.search(query, page, perPage) { searchResponse, error ->
@@ -88,18 +93,17 @@ class SearchUserPresenter {
                 if (users.isNullOrEmpty()) {
                     view.showSearchEmpty()
                 } else {
-                    if (isFirstSearch) {
-                        view.showFirstPageSearchResult(users)
-                    } else {
-                        view.showNextPageSearchResult(users)
-                        view.hideLoadMoreSearchLoading()
+                    view.showSearchResult(users, isFirstSearch)
+
+                    if (!isFirstSearch) {
+                        view.showLoadMoreSearchLoading(false)
                     }
 
                     view.checkEndOfSearchData(searchResponse?.totalCount.orZero())
                     currentSearchPage++
                 }
             } else {
-                view.showError(error)
+                error.message?.let { view.showMessage(it) }
             }
         }
     }

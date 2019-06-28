@@ -1,7 +1,7 @@
-package ds.githubclient.data.network
+package ds.githubclient.data.remote.endpoint
 
-import ds.githubclient.data.network.model.SearchResponse
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.SearchResponse
+import ds.githubclient.data.remote.response.UserResponse
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -21,14 +21,14 @@ interface GithubService {
         @Query("per_page") perPage: Int,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
-    ): Observable<List<User>>
+    ): Observable<List<UserResponse>>
 
     @GET("/users/{login}")
     fun retrieveUser(
         @Path("login") userLogin: String,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
-    ): Observable<User>
+    ): Observable<UserResponse>
 
     @GET("/search/users")
     fun searchUser(
@@ -37,7 +37,7 @@ interface GithubService {
         @Query("per_page") perPage: Int,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET
-    ): Observable<SearchResponse<List<User>?>>
+    ): Observable<SearchResponse<List<UserResponse>?>>
 
     companion object {
         private const val BASE_URL = "http://api.github.com"

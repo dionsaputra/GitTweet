@@ -1,6 +1,6 @@
 package ds.githubclient.ui.main.search.presenter
 
-import ds.githubclient.data.network.model.User
+import ds.githubclient.data.remote.response.UserResponse
 import ds.githubclient.ui.main.search.interactor.SearchInteractor
 import ds.githubclient.ui.main.search.view.SearchMvpView
 import ds.githubclient.util.orFalse
@@ -55,21 +55,21 @@ class SearchPresenter : SearchMvpPresenter {
         }
     }
 
-    private fun onUserResponseReceived(isStartingPage: Boolean, isSearch: Boolean, users: List<User>?, throwable: Throwable?) {
+    private fun onUserResponseReceived(isStartingPage: Boolean, isSearch: Boolean, userResponses: List<UserResponse>?, throwable: Throwable?) {
         showProgress(isStartingPage, isFinish = true)
-        if (users.isNullOrEmpty()) {
+        if (userResponses.isNullOrEmpty()) {
             view.showEmptyUser()
         } else {
             if (isStartingPage) {
-                view.showInitialPageUsers(users)
+                view.showInitialPageUsers(userResponses)
             } else {
-                view.showNextPageUsers(users)
+                view.showNextPageUsers(userResponses)
             }
 
             if (isSearch) {
                 page++
             } else {
-                since = users.last().id.orZero()
+                since = userResponses.last().id.orZero()
             }
         }
 
