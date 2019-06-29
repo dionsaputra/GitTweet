@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ds.gittweet.R
 import ds.gittweet.data.remote.response.UserResponse
-import kotlinx.android.synthetic.main.item_search_user_result.view.*
+import kotlinx.android.synthetic.main.item_remote_user.view.*
 
 class SearchUserAdapter(var data: MutableList<UserResponse>) : RecyclerView.Adapter<SearchUserAdapter.SearchUserHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchUserHolder {
         return SearchUserHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.item_search_user_result,
+                R.layout.item_remote_user,
                 parent,
                 false
             )
@@ -45,8 +45,8 @@ class SearchUserAdapter(var data: MutableList<UserResponse>) : RecyclerView.Adap
     class SearchUserHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: UserResponse) = with(itemView) {
             Glide.with(itemView.context).load(item.avatarUrl).placeholder(R.drawable.user_placeholder)
-                .into(searchResultAvatar)
-            searchResultLogin.text = item.login
+                .into(userRemoteAvatar)
+            userRemoteLogin.text = item.login
 //            tvSearchUserBio.text = item.bio
         }
     }

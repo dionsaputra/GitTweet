@@ -1,28 +1,24 @@
 package ds.gittweet.ui.main.searchuser
 
-import android.widget.Toast
 import ds.gittweet.data.remote.response.SearchResponse
 import ds.gittweet.data.remote.response.UserResponse
-import ds.gittweet.util.orZero
-import io.reactivex.android.schedulers.AndroidSchedulers
+import ds.gittweet.utility.applyScheduler
+import ds.gittweet.utility.orZero
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SearchUserPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable,
-    private val interactor: SearchUserInteractor) {
+    private val interactor: SearchUserInteractor
+) {
 
     lateinit var view: SearchUserView
-
-    companion object {
-        const val SEARCH_DEFAULT_PAGE = 1
-        const val SEARCH_PAGINATION_SIZE = 30
-    }
 
     fun attachView(view: SearchUserView) {
         this.view = view
         view.initView()
+
+        listLocalUser()
     }
 
     fun onBackNavigationClick() {
@@ -36,12 +32,12 @@ class SearchUserPresenter @Inject constructor(
             view.showClearSearchButton(false)
             view.showGroupRecent(true)
             view.showGroupSearch(false)
-            listRecent()
+            listLocalUser()
         } else {
             view.showClearSearchButton(true)
             view.showGroupRecent(false)
             view.showGroupSearch(true)
-            listSearch(query, view.getState().currentSearchPage, SEARCH_PAGINATION_SIZE, true)
+            listRemoteUser(query, view.getState().currentSearchPage)
         }
     }
 
@@ -62,15 +58,15 @@ class SearchUserPresenter @Inject constructor(
     }
 
     fun loadMoreSearch() {
-        listSearch(view.getState().lastSearchQuery, view.getState().currentSearchPage, SEARCH_PAGINATION_SIZE, false)
+        view.getState().isFirstRemoteSearch = false
+        listRemoteUser(view.getState().lastSearchQuery, view.getState().currentSearchPage)
     }
 
-    fun onSearchItemClick(userResponse: UserResponse) {
+    fun onRemoteUserClick(userResponse: UserResponse) {
         view.showMessage(userResponse.login + " has been clicked!")
         compositeDisposable.add(
             interactor.insertRecent(userResponse)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .applyScheduler()
                 .subscribe {
                     view.showMessage("Success insert to database")
                 }
@@ -79,53 +75,37 @@ class SearchUserPresenter @Inject constructor(
 
     private fun resetSearchState() {
         view.getState().resetCurrentSearchPage()
+        view.getState().isFirstRemoteSearch = true
     }
 
-    private fun listRecent() {
-//        interactor.listRecentSearch() { users, error ->
-//            if (error == null) {
-//                if (users.isNullOrEmpty()) {
-//                    view.showRecentEmpty()
-//                } else {
-//                    view.showRecentResult(users)
-//                }
-//            } else {
-//                error.message?.let { view.showMessage(it) }
-//            }
-//        }
-    }
-
-    private fun listSearch(query: String, page: Int, perPage: Int, isFirstSearch: Boolean) {
-        if (!isFirstSearch) {
-            view.showLoadMoreSearchLoading(true)
-        }
-
-        compositeDisposable.clear()
-
+    private fun listLocalUser() {
         compositeDisposable.add(
-            interactor.search(query, page, perPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            interactor.listLocalUser().applyScheduler().subscribe { view.showRecentResult(it) }
+        )
+    }
+
+    private fun listRemoteUser(query: String, page: Int) {
+        compositeDisposable.clear()
+        compositeDisposable.add(
+            interactor.search(query, page, SearchUserViewState.REMOTE_SEARCH_PAGINATION_SIZE)
+                .applyScheduler()
+                .doOnSubscribe { view.showLoadMoreSearchLoading(true) }
+                .doOnTerminate { view.showLoadMoreSearchLoading(false) }
                 .subscribe(
-                    { handleSuccessSearch(it, isFirstSearch) },
+                    { handleSuccessSearch(it) },
                     { handleErrorResponse(it) }
                 )
         )
     }
 
-    private fun handleSuccessSearch(searchUserResponse: SearchResponse<List<UserResponse>?>, isFirstSearch: Boolean) {
+    private fun handleSuccessSearch(searchUserResponse: SearchResponse<List<UserResponse>?>) {
         val users = searchUserResponse.items.orEmpty()
         if (users.isNullOrEmpty()) {
             view.showSearchEmpty()
         } else {
-            view.showSearchResult(users, isFirstSearch)
-
+            view.showSearchResult(users)
             view.checkEndOfSearchData(searchUserResponse.totalCount.orZero())
             view.getState().currentSearchPage++
-        }
-
-        if (!isFirstSearch) {
-            view.showLoadMoreSearchLoading(false)
         }
     }
 

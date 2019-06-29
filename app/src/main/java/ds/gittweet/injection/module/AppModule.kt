@@ -6,11 +6,11 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ds.gittweet.data.local.database.GithubDatabase
-import ds.gittweet.util.AppConstant
+import ds.gittweet.utility.AppConstant
 import io.reactivex.disposables.CompositeDisposable
 
 @Module
-class ApplicationModule(private val application: Application) {
+class AppModule(private val application: Application) {
 
     @Provides
     fun provideApplicationContext(): Context = application.applicationContext

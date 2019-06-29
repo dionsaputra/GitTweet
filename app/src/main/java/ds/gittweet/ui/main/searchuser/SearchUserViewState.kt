@@ -7,12 +7,20 @@ class SearchUserViewState @Inject constructor() {
     var lastSearchQuery: String = ""
     var isLoadingMoreSearchResult: Boolean = false
     var isSearchReachEndOfPage: Boolean = false
-    var currentSearchPage: Int = 1
-    val VISIBLE_THRESHOLD: Int = 5
+    var currentSearchPage: Int = DEFAULT_REMOTE_SEARCH_PAGE
+    var isFirstRemoteSearch: Boolean = true
 
-    fun isSearchRecyclerAbleToLoad() = !isLoadingMoreSearchResult && !isSearchReachEndOfPage
+    fun isSearchRecyclerAbleToLoad(): Boolean {
+        return !isLoadingMoreSearchResult && !isSearchReachEndOfPage
+    }
 
     fun resetCurrentSearchPage() {
-        this.currentSearchPage = 1
+        this.currentSearchPage = DEFAULT_REMOTE_SEARCH_PAGE
+    }
+
+    companion object {
+        private const val DEFAULT_REMOTE_SEARCH_PAGE = 1
+        const val REMOTE_SEARCH_VISIBLE_THRESHOLD = 5
+        const val REMOTE_SEARCH_PAGINATION_SIZE = 30
     }
 }

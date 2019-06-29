@@ -13,10 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ds.gittweet.GitTweet
 import ds.gittweet.R
+import ds.gittweet.data.local.entity.UserEntity
 import ds.gittweet.data.remote.response.UserResponse
 import ds.gittweet.ui.main.injection.DaggerMainComponent
-import ds.mvpkotlin.di.component.ApplicationComponent
-import ds.mvpkotlin.di.component.DaggerApplicationComponent
+import ds.gittweet.ui.main.searchuser.adapter.LocalUserAdapter
+import ds.gittweet.ui.main.searchuser.adapter.RemoteUserAdapter
 import kotlinx.android.synthetic.main.dialog_search_user.*
 import javax.inject.Inject
 
@@ -28,8 +29,8 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
     @Inject
     lateinit var viewState: SearchUserViewState
 
-    private lateinit var recentAdapter: SearchUserAdapter
-    private lateinit var searchAdapter: SearchUserAdapter
+    private lateinit var localUserAdapter: LocalUserAdapter
+    private lateinit var remoteUserAdapter: RemoteUserAdapter
     private lateinit var clearRecentConfirmDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,9 +40,10 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         DaggerMainComponent.builder()
-            .applicationComponent(GitTweet.applicationComponent)
+            .appComponent(GitTweet.appComponent)
             .build()
             .inject(this)
+
         return inflater.inflate(R.layout.dialog_search_user, container)
     }
 
@@ -56,7 +58,7 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
         setupButtonCloseSearch()
         setupButtonClearRecent()
         clearRecentConfirmDialog()
-        setupRecentAdapter()
+        setupRecentRecycler()
         setupSearchRecycler()
     }
 
@@ -82,8 +84,8 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
 
     override fun showRecentEmpty() {}
 
-    override fun showRecentResult(userResponses: List<UserResponse>) {
-        recentAdapter.swapData(userResponses)
+    override fun showRecentResult(users: List<UserEntity>) {
+        localUserAdapter.swapData(users)
     }
 
     override fun showMessage(message: String) {
@@ -92,12 +94,16 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
 
     override fun showSearchEmpty() {}
 
-    override fun showSearchResult(userResponses: List<UserResponse>, isFirstPage: Boolean) {
-        if (isFirstPage) searchAdapter.swapData(userResponses) else searchAdapter.addData(userResponses)
+    override fun showSearchResult(userResponses: List<UserResponse>) {
+        if (viewState.isFirstRemoteSearch) {
+            remoteUserAdapter.swapData(userResponses)
+        } else {
+            remoteUserAdapter.addData(userResponses)
+        }
     }
 
     override fun checkEndOfSearchData(totalCount: Int) {
-        viewState.isSearchReachEndOfPage = (searchAdapter.itemCount == totalCount)
+        viewState.isSearchReachEndOfPage = (remoteUserAdapter.itemCount == totalCount)
     }
 
     override fun showLoadMoreSearchLoading(isShow: Boolean) {
@@ -153,11 +159,11 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
         }
     }
 
-    private fun setupRecentAdapter() {
-        recentAdapter = SearchUserAdapter(mutableListOf(), true)
+    private fun setupRecentRecycler() {
+        localUserAdapter = LocalUserAdapter(mutableListOf())
 
         recyclerRecent.apply {
-            adapter = recentAdapter
+            adapter = localUserAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         }
     }
@@ -168,10 +174,10 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
     }
 
     private fun setupSearchAdapter() {
-        searchAdapter = SearchUserAdapter(mutableListOf(), false) { presenter.onSearchItemClick(it) }
+        remoteUserAdapter = RemoteUserAdapter(mutableListOf()) { presenter.onRemoteUserClick(it) }
 
         recyclerSearch.apply {
-            adapter = searchAdapter
+            adapter = remoteUserAdapter
             layoutManager = LinearLayoutManager(context)
         }
     }
@@ -193,6 +199,6 @@ class SearchUserFragment : DialogFragment(), SearchUserView {
         val firstVisible = layoutManager.findFirstVisibleItemPosition()
         val itemCount = layoutManager.itemCount
 
-        return childCount + firstVisible + viewState.VISIBLE_THRESHOLD >= itemCount
+        return childCount + firstVisible + SearchUserViewState.REMOTE_SEARCH_VISIBLE_THRESHOLD >= itemCount
     }
 }

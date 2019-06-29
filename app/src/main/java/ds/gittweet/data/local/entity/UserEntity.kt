@@ -5,9 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "search_recent_users")
-data class SearchRecentUser(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "search_recent_id") var id: Long = 0,
-    @ColumnInfo(name = "login") val login: String? = null,
+data class UserEntity(
+    @PrimaryKey @ColumnInfo(name = "login") val login: String,
     @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null,
     @ColumnInfo(name = "url") val url: String? = null
 )

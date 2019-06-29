@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/item_recent_search_size"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical"
     android:padding="@dimen/extra_small_space">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/searchRecentAvatar"
+        android:id="@+id/localUserAvatar"
         android:layout_width="@dimen/item_recent_search_avatar_size"
         android:layout_height="@dimen/item_recent_search_avatar_size"
         android:layout_gravity="center_horizontal"
@@ -19,22 +19,14 @@
         app:civ_border_width="1dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="@dimen/extra_small_space">
 
         <TextView
-            android:id="@+id/searchRecentName"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            tools:text="Dion Saputra" />
-
-        <TextView
-            android:id="@+id/searchRecentLogin"
+            android:id="@+id/localUserLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="dionsaputra" />

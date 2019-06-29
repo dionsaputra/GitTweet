@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/searchResultAvatar"
+            android:id="@+id/userRemoteAvatar"
             android:layout_width="@dimen/size_search_result_avatar"
             android:layout_height="@dimen/size_search_result_avatar"
             android:layout_margin="@dimen/extra_small_space"
@@ -31,7 +31,7 @@
             android:padding="@dimen/extra_small_space">
 
             <TextView
-                android:id="@+id/searchResultLogin"
+                android:id="@+id/userRemoteLogin"
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
