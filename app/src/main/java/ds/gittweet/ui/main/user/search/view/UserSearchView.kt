@@ -1,10 +1,9 @@
-package ds.gittweet.ui.main.searchuser
+package ds.gittweet.ui.main.user.search.view
 
 import ds.gittweet.data.local.entity.UserEntity
 import ds.gittweet.data.remote.response.UserResponse
 
-interface SearchUserView {
-
+interface UserSearchView {
     fun initView()
     fun showClearSearchButton(isShow: Boolean)
     fun clearSearchQuery()
@@ -19,6 +18,6 @@ interface SearchUserView {
     fun checkEndOfSearchData(totalCount: Int)
     fun showLoadMoreSearchLoading(isShow: Boolean)
     fun closeView()
-    fun getState(): SearchUserViewState
-
+    fun getState(): UserSearchViewState
+    fun showUserDetail(login: String)
 }

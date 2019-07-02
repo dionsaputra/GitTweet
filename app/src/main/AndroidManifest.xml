@@ -19,8 +19,8 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
-
-        <activity android:name="ds.gittweet.ui.main.MainActivity">
+        <activity android:name=".ui.main.user.detail.view.UserDetailActivity"></activity>
+        <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

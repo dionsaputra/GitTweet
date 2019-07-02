@@ -42,33 +42,8 @@ interface GithubService {
     ): Observable<SearchResponse<List<UserResponse>?>>
 
     companion object {
-        private const val BASE_URL = "http://api.github.com"
+        const val BASE_URL = "http://api.github.com"
         private const val CLIENT_ID = "245bcd04581513f36a64"
         private const val CLIENT_SECRET = "8471c1b4bad816c5806c2412f9b4b8323b51193e"
-
-        private var instance: Retrofit? = null
-
-        private fun getInstance(): Retrofit {
-            if (instance == null) {
-                val interceptor = HttpLoggingInterceptor()
-                interceptor.level = HttpLoggingInterceptor.Level.BODY
-
-                val client = UnsafeOkHttpClient.builder().addInterceptor(interceptor).build()
-                instance = Retrofit
-                    .Builder()
-                    .baseUrl(BASE_URL)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                    .build()
-            }
-            return instance!!
-        }
-
-        fun getEndpoint(): GithubService {
-            return getInstance()
-                .create(GithubService::class.java)
-        }
-
     }
 }

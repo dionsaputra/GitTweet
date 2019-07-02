@@ -1,4 +1,4 @@
-package ds.gittweet.ui.main.searchuser.adapter
+package ds.gittweet.ui.main.user.search.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ds.gittweet.R
 import ds.gittweet.data.remote.response.UserResponse
-import kotlinx.android.synthetic.main.item_local_user.view.*
 import kotlinx.android.synthetic.main.item_remote_user.view.*
 
-class RemoteUserAdapter(
+class UserRemoteAdapter(
     private var data: MutableList<UserResponse>,
     private val onItemClick: ((UserResponse) -> Unit)? = null
-) : RecyclerView.Adapter<RemoteUserAdapter.RemoteUserHolder>() {
+) : RecyclerView.Adapter<UserRemoteAdapter.RemoteUserHolder>() {
 
     private val itemLayout = R.layout.item_remote_user
 

@@ -1,13 +1,14 @@
-package ds.gittweet.ui.main.searchuser
+package ds.gittweet.ui.main.user.search.view
 
 import javax.inject.Inject
 
-class SearchUserViewState @Inject constructor() {
+class UserSearchViewState @Inject constructor() {
 
     var lastSearchQuery: String = ""
     var isLoadingMoreSearchResult: Boolean = false
     var isSearchReachEndOfPage: Boolean = false
-    var currentSearchPage: Int = DEFAULT_REMOTE_SEARCH_PAGE
+    var currentSearchPage: Int =
+        DEFAULT_REMOTE_SEARCH_PAGE
     var isFirstRemoteSearch: Boolean = true
 
     fun isSearchRecyclerAbleToLoad(): Boolean {
@@ -15,7 +16,8 @@ class SearchUserViewState @Inject constructor() {
     }
 
     fun resetCurrentSearchPage() {
-        this.currentSearchPage = DEFAULT_REMOTE_SEARCH_PAGE
+        this.currentSearchPage =
+            DEFAULT_REMOTE_SEARCH_PAGE
     }
 
     companion object {

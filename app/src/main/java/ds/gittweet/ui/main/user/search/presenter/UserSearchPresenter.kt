@@ -1,20 +1,22 @@
-package ds.gittweet.ui.main.searchuser
+package ds.gittweet.ui.main.user.search.presenter
 
 import ds.gittweet.data.remote.response.SearchResponse
 import ds.gittweet.data.remote.response.UserResponse
+import ds.gittweet.ui.main.user.search.view.UserSearchView
+import ds.gittweet.ui.main.user.search.view.UserSearchViewState
 import ds.gittweet.utility.applyScheduler
 import ds.gittweet.utility.orZero
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class SearchUserPresenter @Inject constructor(
+class UserSearchPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable,
-    private val interactor: SearchUserInteractor
+    private val interactor: UserSearchInteractor
 ) {
 
-    lateinit var view: SearchUserView
+    private lateinit var view: UserSearchView
 
-    fun attachView(view: SearchUserView) {
+    fun attachView(view: UserSearchView) {
         this.view = view
         view.initView()
 
@@ -63,12 +65,11 @@ class SearchUserPresenter @Inject constructor(
     }
 
     fun onRemoteUserClick(userResponse: UserResponse) {
-        view.showMessage(userResponse.login + " has been clicked!")
         compositeDisposable.add(
             interactor.insertRecent(userResponse)
                 .applyScheduler()
                 .subscribe {
-                    view.showMessage("Success insert to database")
+                    view.showUserDetail(userResponse.login.orEmpty())
                 }
         )
     }
@@ -87,7 +88,7 @@ class SearchUserPresenter @Inject constructor(
     private fun listRemoteUser(query: String, page: Int) {
         compositeDisposable.clear()
         compositeDisposable.add(
-            interactor.search(query, page, SearchUserViewState.REMOTE_SEARCH_PAGINATION_SIZE)
+            interactor.search(query, page, UserSearchViewState.REMOTE_SEARCH_PAGINATION_SIZE)
                 .applyScheduler()
                 .doOnSubscribe { view.showLoadMoreSearchLoading(true) }
                 .doOnTerminate { view.showLoadMoreSearchLoading(false) }

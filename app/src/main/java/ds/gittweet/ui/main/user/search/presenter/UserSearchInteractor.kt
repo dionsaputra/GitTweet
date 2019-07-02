@@ -1,4 +1,4 @@
-package ds.gittweet.ui.main.searchuser
+package ds.gittweet.ui.main.user.search.presenter
 
 import ds.gittweet.data.local.database.GithubDatabase
 import ds.gittweet.data.local.entity.UserEntity
@@ -6,14 +6,16 @@ import ds.gittweet.data.remote.endpoint.GithubService
 import ds.gittweet.data.remote.response.SearchResponse
 import ds.gittweet.data.remote.response.UserResponse
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class SearchUserInteractor @Inject constructor(private var githubDatabase: GithubDatabase) {
+class UserSearchInteractor @Inject constructor(
+    private var githubDatabase: GithubDatabase,
+    private var githubService: GithubService
+) {
 
     fun search(query: String, page: Int, perPage: Int): Observable<SearchResponse<List<UserResponse>?>> {
-        return GithubService.getEndpoint().searchUser(query, page, perPage)
+        return githubService.searchUser(query, page, perPage)
     }
 
     fun insertRecent(userResponse: UserResponse): Completable {
@@ -30,10 +32,4 @@ class SearchUserInteractor @Inject constructor(private var githubDatabase: Githu
         return githubDatabase.searchRecentUserDao().list()
     }
 
-    private fun createSearchResponse(
-        searchResponse: SearchResponse<List<UserResponse>>,
-        userResponses: List<UserResponse>
-    ): SearchResponse<List<UserResponse>?> {
-        return SearchResponse(searchResponse.totalCount, searchResponse.incompleteResults, userResponses)
-    }
 }

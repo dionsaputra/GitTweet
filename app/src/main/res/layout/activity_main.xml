@@ -8,24 +8,6 @@
     android:orientation="vertical"
     tools:context=".ui.main.MainActivity">
 
-    <!--<com.google.android.material.appbar.AppBarLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@android:color/white">-->
-
-    <!--<androidx.appcompat.widget.Toolbar-->
-    <!--android:id="@+id/mainToolbar"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--app:navigationIcon="@drawable/ic_menu_blue" />-->
-
-    <!--<View-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="1dp"-->
-    <!--android:background="#EEEEEE" />-->
-
-    <!--</com.google.android.material.appbar.AppBarLayout>-->
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/mainViewPager"
         android:layout_width="match_parent"
