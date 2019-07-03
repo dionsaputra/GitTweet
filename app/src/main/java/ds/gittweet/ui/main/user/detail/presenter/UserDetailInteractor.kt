@@ -4,5 +4,4 @@ import javax.inject.Inject
 
 class UserDetailInteractor @Inject constructor() {
 
-
 }
