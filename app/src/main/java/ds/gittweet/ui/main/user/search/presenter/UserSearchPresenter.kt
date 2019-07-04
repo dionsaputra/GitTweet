@@ -4,8 +4,8 @@ import ds.gittweet.data.remote.response.SearchResponse
 import ds.gittweet.data.remote.response.UserResponse
 import ds.gittweet.ui.main.user.search.view.UserSearchView
 import ds.gittweet.ui.main.user.search.view.UserSearchViewState
-import ds.gittweet.utility.applyScheduler
-import ds.gittweet.utility.orZero
+import ds.gittweet.helper.applyScheduler
+import ds.gittweet.helper.orZero
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 

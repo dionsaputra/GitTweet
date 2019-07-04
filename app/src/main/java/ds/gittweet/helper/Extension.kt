@@ -1,13 +1,12 @@
-package ds.gittweet.utility
+package ds.gittweet.helper
 
+import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import android.util.TypedValue
 import android.util.DisplayMetrics
 
 fun Long?.orZero(): Long = this ?: 0
@@ -34,4 +33,19 @@ fun Context.dpToPx(dp: Float): Float {
 
 fun Context.pxToDp(px: Float): Float {
     return px / (this.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
+
+fun Activity.getScreenHeight(): Int {
+    val displayMetrics = DisplayMetrics()
+    this.windowManager.defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics.heightPixels
+}
+
+fun Activity.getStatusBarHeight(): Int {
+    var statusBarHeight = 0
+    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+    if (resourceId > 0) {
+        statusBarHeight = resources.getDimensionPixelSize(resourceId)
+    }
+    return statusBarHeight
 }

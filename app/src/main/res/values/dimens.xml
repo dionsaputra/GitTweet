@@ -7,4 +7,7 @@
     <dimen name="item_recent_search_avatar_size">72dp</dimen>
     <dimen name="normal_space">16dp</dimen>
     <dimen name="size_search_result_avatar">48dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

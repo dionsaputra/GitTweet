@@ -21,7 +21,7 @@ import ds.gittweet.ui.main.user.detail.view.UserDetailActivity
 import ds.gittweet.ui.main.user.search.presenter.UserSearchPresenter
 import ds.gittweet.ui.main.user.search.adapter.UserLocalAdapter
 import ds.gittweet.ui.main.user.search.adapter.UserRemoteAdapter
-import ds.gittweet.utility.AppConstant
+import ds.gittweet.helper.AppConstant
 import kotlinx.android.synthetic.main.dialog_search_user.*
 import javax.inject.Inject
 
