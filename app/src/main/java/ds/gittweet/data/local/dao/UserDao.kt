@@ -10,10 +10,13 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 
 @Dao
-interface SearchRecentUserDao {
+interface UserDao {
 
     @Query("SELECT * FROM search_recent_users")
     fun list(): Observable<List<UserEntity>>
+
+    @Query("SELECT * FROM search_recent_users WHERE ")
+    fun getUserByLogin(login: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(searchRecentUser: UserEntity): Completable

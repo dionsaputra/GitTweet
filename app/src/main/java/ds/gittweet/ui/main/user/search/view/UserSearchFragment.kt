@@ -22,6 +22,7 @@ import ds.gittweet.ui.main.user.search.presenter.UserSearchPresenter
 import ds.gittweet.ui.main.user.search.adapter.UserLocalAdapter
 import ds.gittweet.ui.main.user.search.adapter.UserRemoteAdapter
 import ds.gittweet.helper.AppConstant
+import ds.gittweet.ui.main.user.UserConstant
 import kotlinx.android.synthetic.main.dialog_search_user.*
 import javax.inject.Inject
 
@@ -131,7 +132,7 @@ class UserSearchFragment : DialogFragment(), UserSearchView {
 
     override fun showUserDetail(login: String) {
         val intent = Intent(context, UserDetailActivity::class.java)
-        intent.putExtra(AppConstant.USER_LOGIN_ARG, login)
+        intent.putExtra(UserConstant.USER_LOGIN_ARG, login)
         startActivity(intent)
     }
 

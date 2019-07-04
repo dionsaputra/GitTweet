@@ -3,22 +3,28 @@ package ds.gittweet.ui.main.user.detail.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.bumptech.glide.Glide
 import com.google.android.material.appbar.AppBarLayout
 import ds.gittweet.GitTweet
 import ds.gittweet.R
 import ds.gittweet.data.remote.response.UserResponse
 import ds.gittweet.helper.*
 import ds.gittweet.ui.main.injection.DaggerMainComponent
+import ds.gittweet.ui.main.user.UserConstant
 import ds.gittweet.ui.main.user.detail.presenter.UserDetailPresenter
 import ds.gittweet.ui.main.user.detail.view.adapter.UserDetailPagerAdapter
 import kotlinx.android.synthetic.main.activity_user_detail.*
 import java.lang.Math.abs
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 class UserDetailActivity : AppCompatActivity(), UserDetailView {
 
     @Inject
     lateinit var presenter: UserDetailPresenter
+
+    @Inject
+    lateinit var viewState: UserDetailViewState
 
     private val TAG = UserDetailActivity::class.java.simpleName
 
@@ -36,6 +42,7 @@ class UserDetailActivity : AppCompatActivity(), UserDetailView {
             .build()
             .inject(this)
 
+        viewState.userLogin = intent.getStringExtra(UserConstant.USER_LOGIN_ARG)
         presenter.attachView(this)
     }
 
@@ -61,11 +68,30 @@ class UserDetailActivity : AppCompatActivity(), UserDetailView {
     }
 
     override fun showUserDetail(user: UserResponse) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Glide.with(this).load(user.avatarUrl).placeholder(R.drawable.user_placeholder).into(userDetailAvatar)
+        userDetailName.text = user.name
+        userDetailLogin.text = user.login
+        userDetailBio.text = user.bio
+        userDetailAddress.text = user.location
+        userDetailJoined.text = SimpleDateFormat("MMM dd, yyyy").format(user.createdAt)
+        userDetailFollowingCounter.text = user.following.toString()
+        userDetailFollowersCounter.text = user.followers.toString()
     }
 
     private fun setupToolbar() {
         setupToolbarListener()
+    }
+
+    override fun showLoading(isLoading: Boolean) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showErrorResponse(it: Throwable?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getState(): UserDetailViewState {
+        return viewState
     }
 
     private fun setupToolbarListener() {
@@ -86,14 +112,10 @@ class UserDetailActivity : AppCompatActivity(), UserDetailView {
     }
 
     private fun isAvatarReachMinHeight(collapsingOffset: Int): Boolean {
-        Log.d(TAG, "${dpToPx(userDetailAvatar.layoutParams.height.toFloat())} $USER_AVATAR_MIN_SIZE")
         return userDetailAvatar.layoutParams.height <= USER_AVATAR_MIN_SIZE
     }
 
     private fun setToolbarTitleVisibility(collapsingOffset: Int) {
-        Log.d(TAG, "${userDetailCollapsingToolbar.height} ${userDetailAppBar.layoutParams.height}")
-        Log.d(TAG, "${pxToDp(userDetailAppBar.height.toFloat())}")
-
         if (abs(collapsingOffset) > pxToDp(userDetailAppBar.height.toFloat() - userDetailToolbar.height.toFloat())){
             userDetailToolbar.title = "Dion Saputra"
             userDetailToolbar.subtitle = "58 Tweets"

@@ -3,6 +3,7 @@ package ds.gittweet.data.remote.endpoint
 import ds.gittweet.data.remote.response.SearchResponse
 import ds.gittweet.data.remote.response.UserResponse
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,7 +27,7 @@ interface GithubService {
     ): Observable<List<UserResponse>>
 
     @GET("/users/{login}")
-    fun retrieveUser(
+    fun getUserByLogin(
         @Path("login") userLogin: String,
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("client_secret") clientSecret: String = CLIENT_SECRET

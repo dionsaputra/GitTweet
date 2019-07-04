@@ -1,13 +1,13 @@
 package ds.gittweet.ui.main.user.detail.presenter
 
-import ds.gittweet.data.remote.response.UserResponse
+import ds.gittweet.helper.applyScheduler
 import ds.gittweet.ui.main.user.detail.view.UserDetailView
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class UserDetailPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable,
-    private val userDetailInteractor: UserDetailInteractor
+    private val interactor: UserDetailInteractor
 ) {
 
     private lateinit var view: UserDetailView
@@ -16,14 +16,14 @@ class UserDetailPresenter @Inject constructor(
         this.view = view
         view.initView()
 
-        loadDetailUser()
+        loadDetailUser(view.getState().userLogin)
     }
 
     fun onBackNavigationClick() {
         view.closeView()
     }
 
-    fun onEditProfileClick(){
+    fun onEditProfileClick() {
         view.showUserEdit()
     }
 
@@ -31,8 +31,17 @@ class UserDetailPresenter @Inject constructor(
         view.showUserAvatar()
     }
 
-    fun loadDetailUser() {
-        //view.showUserDetail(user)
+    private fun loadDetailUser(userLogin: String) {
+        compositeDisposable.add(
+            interactor.getUser(userLogin)
+                .applyScheduler()
+                .doOnSubscribe { view.showLoading(true) }
+                .doOnTerminate { view.showLoading(false) }
+                .subscribe(
+                    { view.showUserDetail(it) },
+                    { view.showErrorResponse(it) }
+                )
+        )
     }
 
     fun detachView() {

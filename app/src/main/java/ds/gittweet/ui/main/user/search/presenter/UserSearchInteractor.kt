@@ -25,11 +25,11 @@ class UserSearchInteractor @Inject constructor(
             url = userResponse.url
         )
 
-        return githubDatabase.searchRecentUserDao().insert(searchRecentUser)
+        return githubDatabase.getUserDao().insert(searchRecentUser)
     }
 
     fun listLocalUser(): Observable<List<UserEntity>> {
-        return githubDatabase.searchRecentUserDao().list()
+        return githubDatabase.getUserDao().list()
     }
 
 }

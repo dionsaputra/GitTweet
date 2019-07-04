@@ -7,8 +7,7 @@ class UserSearchViewState @Inject constructor() {
     var lastSearchQuery: String = ""
     var isLoadingMoreSearchResult: Boolean = false
     var isSearchReachEndOfPage: Boolean = false
-    var currentSearchPage: Int =
-        DEFAULT_REMOTE_SEARCH_PAGE
+    var currentSearchPage: Int = DEFAULT_REMOTE_SEARCH_PAGE
     var isFirstRemoteSearch: Boolean = true
 
     fun isSearchRecyclerAbleToLoad(): Boolean {

@@ -8,4 +8,7 @@ interface UserDetailView {
     fun showUserEdit()
     fun showUserAvatar()
     fun showUserDetail(user: UserResponse)
+    fun showLoading(isLoading: Boolean)
+    fun showErrorResponse(it: Throwable?)
+    fun getState(): UserDetailViewState
 }
